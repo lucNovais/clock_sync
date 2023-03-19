@@ -40,7 +40,7 @@ def start():
 
         thread = threading.Thread(
             target=send_time,
-            args=(conn)
+            args=[conn]
         )
 
         thread.start()

@@ -36,11 +36,11 @@ def start():
 
     while True:
         conn, addr = sock.accept()
-        print(f'({threading.active_count - 1}) Cliente connectado: {addr}')
+        print(f'({threading.active_count() - 1}) Cliente connectado: {addr}')
 
         thread = threading.Thread(
             target=send_time,
-            args=[conn, threading.active_count - 1]
+            args=[conn, threading.active_count() - 1]
         )
 
         thread.start()

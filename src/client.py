@@ -49,7 +49,7 @@ def default_screen(connected, current_time, sock):
     reference_time = time.time()
     while True:
         elapsed_time = time.time() - reference_time
-        if TIME_TO_UPDATE - elapsed_time == 0:
+        if TIME_TO_UPDATE - elapsed_time <= 0:
             current_time = request_time(sock)
             default_screen(connected, current_time, sock)
 

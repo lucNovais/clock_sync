@@ -10,7 +10,7 @@ def update_with_ntp():
     response = ntp_client.request(NTP_SERVER, version=3)
     return response.tx_time
 
-def send_time(conn):
+def send_time(conn, client_index):
     connected = True
     while connected:
         msg = conn.recv(BUFFER_SIZE).decode()
@@ -20,7 +20,7 @@ def send_time(conn):
                 ntp_time = update_with_ntp()
                 local_time = time.strftime('%d-%m-%Y %H:%M:%S', time.localtime(ntp_time))
                 conn.sendall(local_time.encode())
-                print(f'Tempo enviado para o cliente: {local_time}')
+                print(f'Tempo enviado para o cliente {client_index}: {local_time}')
             except:
                 print('Conexao encerrada pelo cliente ou parada forcada!')
                 conn.close()
@@ -36,11 +36,11 @@ def start():
 
     while True:
         conn, addr = sock.accept()
-        print(f'Cliente connectado: {addr}')
+        print(f'({threading.active_count - 1}) Cliente connectado: {addr}')
 
         thread = threading.Thread(
             target=send_time,
-            args=[conn]
+            args=[conn, threading.active_count - 1]
         )
 
         thread.start()

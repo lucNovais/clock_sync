@@ -14,7 +14,9 @@ def connect():
     connected = True
     current_time = None
 
-    current_time = request_time(sock)
+    t0 = time.time()
+    (server_time, t1) = request_time(sock)
+    current_time = server_time + (t1 - t0) / 2
 
     default_screen(connected, current_time, sock)
 
@@ -33,14 +35,15 @@ def request_time(sock):
     `data`: tempo recebido do servidor.
     """
     sock.send(TIME_REQUEST.encode())
+
     try:
-        data = sock.recv(BUFFER_SIZE).decode()
-        print('Tempo recebido do servidor:', data)
+        data = float(sock.recv(BUFFER_SIZE).decode())
+        t1 = time.time()
     except:
         print('Conexao fechada pelo servidor ou parada forcada!')
         sock.close()
     
-    return data
+    return (data, t1)
 
 def default_screen(connected, current_time, sock):
     """
@@ -51,14 +54,18 @@ def default_screen(connected, current_time, sock):
     if connected:
         print('Conectado ao servidor de tempo!\n')
     
-    print(f'Tempo local: {current_time}')
+    print(f"Tempo local: {time.strftime('%d-%m-%Y %H:%M:%S', time.localtime(current_time))}")
 
     reference_time = time.time()
     while True:
         elapsed_time = time.time() - reference_time
         print(f'Atualizacao em: {int(TIME_TO_UPDATE - elapsed_time)} segundos.', end='\r')
+
         if TIME_TO_UPDATE - elapsed_time <= 0:
-            current_time = request_time(sock)
+            t0 = time.time()
+            (server_time, t1) = request_time(sock)
+            current_time = server_time + (t1 - t0) / 2
+
             default_screen(connected, current_time, sock)
 
 if __name__ == '__main__':

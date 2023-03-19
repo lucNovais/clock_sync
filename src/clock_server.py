@@ -20,8 +20,8 @@ def send_time(conn, client_index):
             try:
                 ntp_time = update_with_ntp()
                 local_time = time.strftime('%d-%m-%Y %H:%M:%S', time.localtime(ntp_time))
-                
-                conn.sendall(local_time.encode())
+
+                conn.sendall(str(ntp_time).encode())
                 print(f'Tempo enviado para o cliente {client_index}: {local_time}')
             except:
                 print('Conexao encerrada pelo cliente ou parada forcada!')

@@ -4,8 +4,10 @@ import time
 
 from constants import *
 
-
 def connect():
+    """
+    Funcao responsavel por conectar um cliente ao servidor de tempo.
+    """
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect((SERVER_ADDRESS, SERVER_PORT))
 
@@ -16,17 +18,20 @@ def connect():
 
     default_screen(connected, current_time, sock)
 
-"""
-- Cliente conecta no servidor de tempo pela primeira vez:
-    - atualiza seu relogio
-
-- Proxima atualizacao (a cada x segundos):
-    - pegar o tempo atual - tempo recebido = valor do incremento
-    - valor do incremento / 10
-    - incrementar o tempo atual 10x com esse valor + RTT + tempo de recebimento ate esse momento
-"""
-
 def request_time(sock):
+    """
+    Funcao responsavel por fazer uma requisicao de atualizacao temporal para o servidor.
+
+    Parametros:
+    -----------
+
+    `sock`: objeto socket que contem a conexao com o servidor.
+
+    Retorno:
+    --------
+
+    `data`: tempo recebido do servidor.
+    """
     sock.send(TIME_REQUEST.encode())
     try:
         data = sock.recv(BUFFER_SIZE).decode()
@@ -38,17 +43,20 @@ def request_time(sock):
     return data
 
 def default_screen(connected, current_time, sock):
+    """
+    Tela principal do cliente.
+    """
     os.system('clear')
 
     if connected:
         print('Conectado ao servidor de tempo!\n')
     
     print(f'Tempo local: {current_time}')
-    print(f'Periodo de atualizacao: {TIME_TO_UPDATE} segundos')
 
     reference_time = time.time()
     while True:
         elapsed_time = time.time() - reference_time
+        print(f'Atualizacao em: {int(TIME_TO_UPDATE - elapsed_time)} segundos.', end='\r')
         if TIME_TO_UPDATE - elapsed_time <= 0:
             current_time = request_time(sock)
             default_screen(connected, current_time, sock)

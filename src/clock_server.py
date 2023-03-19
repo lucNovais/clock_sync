@@ -14,13 +14,13 @@ def send_time(conn, client_index):
     connected = True
 
     while connected:
-        ntp_time = update_with_ntp()
-        local_time = time.strftime('%d-%m-%Y %H:%M:%S', time.localtime(ntp_time))
-
         msg = conn.recv(BUFFER_SIZE).decode()
 
         if msg == TIME_REQUEST:
             try:
+                ntp_time = update_with_ntp()
+                local_time = time.strftime('%d-%m-%Y %H:%M:%S', time.localtime(ntp_time))
+                
                 conn.sendall(local_time.encode())
                 print(f'Tempo enviado para o cliente {client_index}: {local_time}')
             except:

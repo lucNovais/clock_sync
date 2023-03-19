@@ -15,7 +15,6 @@ def send_time(conn, client_index):
 
     while connected:
         ntp_time = update_with_ntp()
-        print(time.localtime(ntp_time))
         local_time = time.strftime('%d-%m-%Y %H:%M:%S', time.localtime(ntp_time))
 
         msg = conn.recv(BUFFER_SIZE).decode()

@@ -46,7 +46,7 @@ def default_screen(connected, current_time, sock):
     print(f'Tempo local: {current_time}')
     print(f'Periodo de atualizacao: {TIME_TO_UPDATE} segundos')
 
-    reference_time = current_time
+    reference_time = time.time()
     while True:
         elapsed_time = time.time() - reference_time
         if TIME_TO_UPDATE - elapsed_time == 0:

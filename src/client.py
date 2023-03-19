@@ -9,9 +9,9 @@ def connect():
     sock.connect((SERVER_ADDRESS, SERVER_PORT))
 
     connected = True
-    current_time = 0
+    current_time = None
 
-    print_default_screen(connected, current_time, sock)
+    default_screen(connected, current_time, sock)
 
 def request_time(sock):
     sock.send(TIME_REQUEST.encode())
@@ -21,11 +21,10 @@ def request_time(sock):
     except:
         print('Conexao fechada pelo servidor ou parada forcada!')
         sock.close()
-        return None
     
     return data
 
-def print_default_screen(connected, current_time, sock):
+def default_screen(connected, current_time, sock):
     os.system('clear')
 
     if connected:
@@ -37,10 +36,10 @@ def print_default_screen(connected, current_time, sock):
         try:
             opt = int(input('Digite (1) para atualizar o tempo: '))
         except TypeError:
-            print('Tipo de entrada errado!')
+            print('Erro no tipo da entrada!')
         if opt == 1:
             current_time = request_time(sock)
-            print_default_screen(connected, current_time, sock)
+            default_screen(connected, current_time, sock)
 
 if __name__ == '__main__':
     connect()

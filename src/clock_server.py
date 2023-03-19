@@ -20,16 +20,17 @@ def start():
         conn, addr = sock.accept()
         print(f'Cliente connectado: {addr}')
 
-        try:
-            while True:
+        msg = conn.recv(BUFFER_SIZE).decode()
+
+        if msg == TIME_REQUEST:
+            try:
                 ntp_time = update_with_ntp()
                 local_time = time.strftime('%d-%m-%Y %H:%M:%S', time.localtime(ntp_time))
                 conn.sendall(local_time.encode())
                 print(f'Tempo enviado para o cliente: {local_time}')
-                time.sleep(1)
-        except:
-            print('Conexao encerrada pelo cliente!')
-            conn.close()
+            except:
+                print('Conexao encerrada pelo cliente ou parada forcada!')
+                conn.close()
 
 if __name__ == '__main__':
     start()

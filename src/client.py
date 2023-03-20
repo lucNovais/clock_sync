@@ -56,8 +56,9 @@ def default_screen(connected, current_time, sock):
         if TIME_TO_UPDATE - elapsed_time <= 0:
             t0 = time.time()
             (server_time, t1) = request_time(sock)
-            aux_time = (server_time + (t1 - t0) / 2) / DIVISION_CONSTANT
-            print(f'aux_time = {aux_time}')
+            
+            # Encontrando o incremento de tempo e dividindo entre partes menores para aumentar gradativamente
+            aux_time = (current_time - (server_time + (t1 - t0) / 2)) / DIVISION_CONSTANT
 
             for _ in range(DIVISION_CONSTANT):
                 current_time += aux_time

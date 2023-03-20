@@ -18,3 +18,6 @@ TIME_REQUEST = 'UPDATED_TIME'
 
 # Tempo que os clientes conectados ao servidor de tempo realizam solicitacao de atualizacao
 TIME_TO_UPDATE = 10
+
+# Constante da divisao do incremento gradual do tempo local do cliente
+DIVISION_CONSTANT = 10

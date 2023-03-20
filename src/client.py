@@ -15,6 +15,8 @@ def connect():
 
     # Calculo da estimativa do RTT pela formula do algoritmo de Cristian:
     #         T_cliente = T_servidor + (T1 - T0) / 2
+    # Como essa e a primeira requisicao de tempo para o servidor, a atribuicao
+    # do tempo local nao sera feita de maneira gradual
     t0 = time.time()
     (server_time, t1) = request_time(sock)
     current_time = server_time + (t1 - t0) / 2
@@ -54,7 +56,10 @@ def default_screen(connected, current_time, sock):
         if TIME_TO_UPDATE - elapsed_time <= 0:
             t0 = time.time()
             (server_time, t1) = request_time(sock)
-            current_time = server_time + (t1 - t0) / 2
+            aux_time = (server_time + (t1 - t0) / 2) / DIVISION_CONSTANT
+
+            for i in range(DIVISION_CONSTANT):
+                current_time += aux_time
 
             default_screen(connected, current_time, sock)
 

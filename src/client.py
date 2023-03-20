@@ -38,6 +38,10 @@ def request_time(sock):
 
     try:
         data = float(sock.recv(BUFFER_SIZE).decode())
+
+        if(len(data) == 0):
+            request_time(sock)
+            
         t1 = time.time()
     except:
         print('Conexao fechada pelo servidor ou parada forcada!')

@@ -58,10 +58,15 @@ def default_screen(connected, current_time, sock):
             (server_time, t1) = request_time(sock)
             
             # Encontrando o incremento de tempo e dividindo entre partes menores para aumentar gradativamente
+            t_inicio_incremento = time.time()
             aux_time = ((server_time + (t1 - t0) / 2) - current_time) / DIVISION_CONSTANT
 
             for _ in range(DIVISION_CONSTANT):
                 current_time += aux_time
+            t_fim_incremento = time.time()
+
+            # Considerando o atraso do incremento gradativo do tempo local
+            current_time += (t_fim_incremento - t_inicio_incremento)
 
             default_screen(connected, current_time, sock)
 

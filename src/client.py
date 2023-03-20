@@ -5,8 +5,7 @@ import time
 from constants import *
 
 def connect():
-    """
-    Funcao responsavel por conectar um cliente ao servidor de tempo.
+    """ Funcao responsavel por conectar um cliente ao servidor de tempo.
     """
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect((SERVER_ADDRESS, SERVER_PORT))
@@ -14,6 +13,8 @@ def connect():
     connected = True
     current_time = None
 
+    # Calculo da estimativa do RTT pela formula do algoritmo de Cristian:
+    #         T_cliente = T_servidor + (T1 - T0) / 2
     t0 = time.time()
     (server_time, t1) = request_time(sock)
     current_time = server_time + (t1 - t0) / 2
@@ -21,33 +22,21 @@ def connect():
     default_screen(connected, current_time, sock)
 
 def request_time(sock):
-    """
-    Funcao responsavel por fazer uma requisicao de atualizacao temporal para o servidor.
-
-    Parametros:
-    -----------
-
-    `sock`: objeto socket que contem a conexao com o servidor.
-
-    Retorno:
-    --------
-
-    `data`: tempo recebido do servidor.
+    """ Funcao responsavel por fazer uma requisicao de atualizacao temporal para o servidor.
     """
     sock.send(TIME_REQUEST.encode())
 
     try:
-        data = float(sock.recv(BUFFER_SIZE).decode())
+        raw_server_time = float(sock.recv(BUFFER_SIZE).decode())
         t1 = time.time()
     except:
         print('Conexao fechada pelo servidor ou parada forcada!')
         sock.close()
     
-    return (data, t1)
+    return (raw_server_time, t1)
 
 def default_screen(connected, current_time, sock):
-    """
-    Tela principal do cliente.
+    """ Tela principal do cliente.
     """
     os.system('clear')
 
@@ -61,6 +50,7 @@ def default_screen(connected, current_time, sock):
         elapsed_time = time.time() - reference_time
         print(f'Atualizacao em: {int(TIME_TO_UPDATE - elapsed_time)} segundos.', end='\r')
 
+        # Verifica se esta no momento de solicitar uma atualizacao para o servidor atraves do timer
         if TIME_TO_UPDATE - elapsed_time <= 0:
             t0 = time.time()
             (server_time, t1) = request_time(sock)
